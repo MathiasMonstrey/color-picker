@@ -1,18 +1,10 @@
-<template src="./home.html"></template>
+<template src="./colorpicker.html"></template>
 
-<script lang="ts" src="./home.ts">
+<script lang="ts" src="./colorpicker.ts">
 </script>
 
 <style lang="scss" scoped>
-* {
-  box-sizing: border-box;
-}
-
-.img-magnifier-container {
-  position: relative;
-}
-
-.img-magnifier-glass {
+.magnifier-glass {
   position: absolute;
   border: 3px solid #000;
   border-radius: 50%;
@@ -20,5 +12,6 @@
   /*Set the size of the magnifier glass:*/
   width: 100px;
   height: 100px;
+  pointer-events: none;
 }
 </style>
