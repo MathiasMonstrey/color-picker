@@ -10,7 +10,7 @@ export default class Colorpicker extends Vue {
     public magnifierGlassHeight: number = 0;
     public showMagnifierGlass: boolean = false;
 
-    @Prop({ default: 2, type: Number })
+    @Prop({ default: 4, type: Number })
     public zoom: number;
 
     @Watch('$attrs.src', { immediate: true })
@@ -37,7 +37,7 @@ export default class Colorpicker extends Vue {
             Vue.set(
                 this.magnifierGlassStyle,
                 'backgroundPosition',
-                `-${event.offsetX * this.zoom}px -${event.offsetY * this.zoom}px`,
+                `-${(event.offsetX * this.zoom) - 50}px -${(event.offsetY * this.zoom) - 50}px`,
             );
         }
     }
