@@ -1,4 +1,5 @@
 <div>
     <img v-bind="$attrs" @mousemove="mousemove" />
     <div v-if="showMagnifierGlass" class="magnifier-glass" :style="magnifierGlassStyle"></div>
+    <div v-if="showMagnifierColor" class="magnifier-color" :style="magnifierColorStyle">{{label}} <div class="magnifier-color-square" :style="magnifierColorSquareStyle" /></div>
 </div>
