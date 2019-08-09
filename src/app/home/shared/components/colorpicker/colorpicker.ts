@@ -1,4 +1,4 @@
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch, PropSync } from 'vue-property-decorator';
 
 @Component
 export default class Colorpicker extends Vue {
@@ -7,7 +7,7 @@ export default class Colorpicker extends Vue {
     public pixel: Uint8ClampedArray = null;
     public magnifierGlassStyle: any = {};
     public magnifierColorStyle: any = {};
-    public showMagnifierGlass: boolean = false;
+    public mouseOver: boolean = false;
 
     @Prop({ default: 4, type: Number })
     public zoom: number;
@@ -21,18 +21,29 @@ export default class Colorpicker extends Vue {
     @Prop({ default: false, type: Boolean })
     public colorLabel: boolean;
 
-    @Watch('$attrs.src', { immediate: true })
+    @Prop({ required: true, type: String })
+    public src: string;
+
+    @Prop({ required: true, type: Number })
+    public width: number;
+
+    @Prop({ required: true, type: Number })
+    public height: number;
+
+    @Prop({ required: true, type: String })
+    public alt: string;
+
+    @Watch('src', { immediate: true })
     public onImageSourceUpdate(newImageSource: string) {
         this.createCanvas(newImageSource);
         this.createMagnifyingGlass(newImageSource);
     }
 
-    get imageWidth(): number {
-        return parseInt(this.$attrs.width, 10);
-    }
-
-    get imageHeight(): number {
-        return parseInt(this.$attrs.height, 10);
+    get colorPickerStyle(): any {
+        return {
+            width: this.width,
+            height: this.height,
+        };
     }
 
     get label(): string {
@@ -46,7 +57,10 @@ export default class Colorpicker extends Vue {
     }
 
     get showMagnifierColor(): boolean {
-        return this.pixel && this.colorLabel;
+        return this.pixel && this.colorLabel && this.mouseOver;
+    }
+    get showMagnifierGlass(): boolean {
+        return !!this.canvas && this.mouseOver;
     }
 
     get magnifierColorSquareStyle() {
@@ -58,23 +72,29 @@ export default class Colorpicker extends Vue {
         return {};
     }
 
+    public mouseleave(event: MouseEvent){
+        this.mouseOver = false;
+    }
+
     public mousemove(event: MouseEvent) {
+        this.mouseOver = true;
         if (this.canvas) {
-            this.showMagnifierGlass = true;
             this.pixel = this.canvas.getContext('2d')!.getImageData(event.offsetX, event.offsetY, 1, 1).data;
             this.$emit('color-update', { r: this.pixel[0], g: this.pixel[1], b: this.pixel[2] });
-            Vue.set(this.magnifierGlassStyle, 'left', `${event.offsetX - this.magnifierGlassWidth}px`);
-            Vue.set(this.magnifierGlassStyle, 'top', `${event.offsetY - this.magnifierGlassHeight}px`);
-            Vue.set(this.magnifierColorStyle, 'left', `${event.offsetX - this.magnifierGlassWidth - 100}px`);
-            Vue.set(this.magnifierColorStyle, 'top', `${event.offsetY + this.magnifierGlassHeight + 5}px`);
+            Vue.set(this.magnifierGlassStyle, 'left', `${event.pageX - this.magnifierGlassWidth}px`);
+            Vue.set(this.magnifierGlassStyle, 'top', `${event.pageY - this.magnifierGlassHeight}px`);
+            Vue.set(this.magnifierColorStyle, 'left', `${event.pageX - this.magnifierGlassWidth - 100}px`);
+            Vue.set(this.magnifierColorStyle, 'top', `${event.pageY + this.magnifierGlassHeight + 5}px`);
+
+            console.log({ clientY: event.clientY, offsetY: event.offsetY, event });
 
             Vue.set(
                 this.magnifierGlassStyle,
                 'backgroundPosition',
-                `-${
-                (event.offsetX * this.zoom) - this.magnifierGlassWidth
-                }px -${
-                (event.offsetY * this.zoom) - this.magnifierGlassHeight
+                `${0 - (
+                    (event.offsetX * this.zoom) - this.magnifierGlassWidth)
+                }px ${0 - (
+                    (event.offsetY * this.zoom) - this.magnifierGlassHeight)
                 }px`,
             );
         }
@@ -82,13 +102,13 @@ export default class Colorpicker extends Vue {
 
     private createCanvas(imageSource: string) {
         const canvas = document.createElement('canvas');
-        canvas.width = this.imageWidth;
-        canvas.height = this.imageHeight;
+        canvas.width = this.width;
+        canvas.height = this.height;
         const context = canvas.getContext('2d');
         const img = new Image();
         img.src = imageSource;
         img.onload = () => {
-            context!.drawImage(img, 0, 0, this.imageWidth, this.imageHeight);
+            context!.drawImage(img, 0, 0, this.width, this.height);
         };
         this.canvas = canvas;
     }
@@ -98,7 +118,7 @@ export default class Colorpicker extends Vue {
         Vue.set(this.magnifierGlassStyle, 'backgroundRepeat', 'no-repeat');
         Vue.set(this.magnifierGlassStyle,
             'backgroundSize',
-            `${this.imageWidth * this.zoom}px ${this.imageHeight * this.zoom}px`);
+            `${this.width * this.zoom}px ${this.height * this.zoom}px`);
     }
 }
 

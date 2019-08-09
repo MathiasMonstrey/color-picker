@@ -1,3 +1,6 @@
-<div class="img-magnifier-container">
-    <colorpicker :src="imageSrc" width="559" height="744" alt="City" @color-update="updateColor" color-label/>
+<div style="display: inline-block">
+    <colorpicker :src="imageSrc1" :width="559" :height="744" alt="City" @color-update="updateColor" color-label
+        style="display: inline-block" />
+    <colorpicker :src="imageSrc2" :width="640" :height="360" alt="Rick and morty" @color-update="updateColor"
+        color-label style="display: inline-block" />
 </div>
