@@ -1,7 +1,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import Colorpicker from './shared/components/colorpicker/colorpicker';
+import EyedropTool from 'vue-eyedrop-tool';
 
-@Component({ components: { Colorpicker } })
+@Component({ components: { EyedropTool } })
 export default class Home extends Vue {
     public imageSrc1 = require('@/app/home/assets/city.jpg');
     public imageSrc2 = require('@/app/home/assets/rick-morty.jpg');

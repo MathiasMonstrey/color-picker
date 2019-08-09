@@ -6,6 +6,8 @@ import VueModuleRoutes from '@mmathias/vue-module-routes';
 import error from '@/app/error/error';
 import './registerServiceWorker';
 
+import 'vue-eyedrop-tool/dist/eyedrop.css';
+
 Vue.config.productionTip = false;
 
 Vue.use(VueModuleRoutes, { router, error });
